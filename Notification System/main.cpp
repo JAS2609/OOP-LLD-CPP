@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <memory>
+#include <vector>
 using namespace std;
 
 
@@ -41,6 +43,13 @@ class NotificationService{
     void sendNotification(Notification& notif, const string& message){
         notif.send(message);
     }
+    void sendAll(const vector<unique_ptr<Notification>>& notifications,const string& message) {
+        for (const auto& notification : notifications) {
+            if (notification) {
+                notification->send(message);
+            }
+        }
+    }
 };
 int main() {
     NotificationService service;
@@ -52,6 +61,15 @@ int main() {
     service.sendNotification(email, "Welcome!");
     service.sendNotification(sms, "Your OTP is 1234");
     service.sendNotification(push, "You have a new message");
+
+
+
+    vector<unique_ptr<Notification>> notifications;
+    notifications.push_back( make_unique<EmailNotification>("alice@example.com"));
+    notifications.push_back(make_unique<SMSNotification>("9999999999"));
+    notifications.push_back( make_unique<PushNotification>("DEVICE_TOKEN_456"));
+    cout << "\nNotifications stored in vector:\n";
+    service.sendAll(notifications, "Your order has been shipped!");
     return 0;
 
 }
