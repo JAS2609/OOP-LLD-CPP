@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 using namespace std;
 
 class DynamicArray
@@ -28,7 +29,10 @@ public:
             arr[index] = value;
         }
     }
-
+    int getSize() const
+    {
+        return size;
+    }
     int getValue(int index) const
     {
         if (index >= 0 && index < size)
@@ -63,4 +67,25 @@ public:
 
         return *this;
     }
+
+    DynamicArray(DynamicArray &&other) noexcept
+        : arr(other.arr), size(other.size)
+    {
+
+        other.arr = nullptr;
+        other.size = 0;
+    };
+    DynamicArray &operator=(DynamicArray &&other) noexcept
+    {
+
+        if (this != &other)
+        {
+            delete[] arr;
+            arr = other.arr;
+            size = other.size;
+            other.arr = nullptr;
+            other.size = 0;
+        }
+        return *this;
+    };
 };
